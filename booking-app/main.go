@@ -1,6 +1,13 @@
 package main // everything in go is package
 
-import "fmt" // fmt package Print() function belong here
+// importing single package
+// import "fmt" // fmt package Print() function belong here
+
+// importing multiple package
+import (
+	"fmt"
+	"strings"
+)
 
 // main() is the entrypoint
 func main() {
@@ -26,35 +33,62 @@ func main() {
 	// bookingDetails := []string{}
 	var bookingDetails []string
 
-	var firstName string // defining type of the variable
-	var lastName string
-	var email string
-	var userTickets uint
-	// taking user input
-	fmt.Println("Enter your first Name: ")
-	fmt.Scan(&firstName)
+	// only for loop is exist in GO
 
-	fmt.Println("Enter your last Name: ")
-	fmt.Scan(&lastName)
+	// for i := 0; i < 5; i++ {
+	// 	fmt.Print(i, " ")
+	// }
 
-	fmt.Println("Enter your email Name: ")
-	fmt.Scan(&email)
+	// // for i := range 5{
+	// // 	fmt.Print(i, " ")
+	// // }
 
-	fmt.Println("Enter number of tickets: ")
-	fmt.Scanf("%d", &userTickets)
+	// fmt.Println("")
 
-	bookedTickets = bookedTickets + userTickets
-	// bookingDetails[0] = firstName + " " + lastName // string concatination
-	bookingDetails = append(bookingDetails, firstName+" "+lastName) // adding value to the slice
+	// infinite for-loop syntax for{}
 
-	fmt.Println("Whole array ", bookingDetails)
-	fmt.Println("First element: ", bookingDetails[0])
-	fmt.Printf("Type of array: %T\n", bookingDetails)
-	fmt.Printf("Length of array: %v\n", len(bookingDetails))
+	for {
+		var firstName string // defining type of the variable
+		var lastName string
+		var email string
+		var userTickets uint
+		// taking user input
+		fmt.Println("Enter your first Name: ")
+		fmt.Scan(&firstName)
 
-	fmt.Printf("Thank you %v %v for booking %v tickets. You will get confirmation email at %v.\n",
-		firstName, lastName, userTickets, email)
+		fmt.Println("Enter your last Name: ")
+		fmt.Scan(&lastName)
 
-	fmt.Printf("Total tickets: %d, Available tickets: %d\n", conferenceTickets, conferenceTickets-bookedTickets)
+		fmt.Println("Enter your email Name: ")
+		fmt.Scan(&email)
+
+		fmt.Println("Enter number of tickets: ")
+		fmt.Scanf("%d", &userTickets)
+
+		bookedTickets = bookedTickets + userTickets
+		// bookingDetails[0] = firstName + " " + lastName // string concatination
+		bookingDetails = append(bookingDetails, firstName+" "+lastName) // adding value to the slice
+
+		// fmt.Println("Whole array ", bookingDetails)
+		// fmt.Println("First element: ", bookingDetails[0])
+		// fmt.Printf("Type of array: %T\n", bookingDetails)
+		// fmt.Printf("Length of array: %v\n", len(bookingDetails))
+
+		fmt.Printf("Thank you %v %v for booking %v tickets. You will get confirmation email at %v.\n",
+			firstName, lastName, userTickets, email)
+
+		fmt.Printf("Total tickets: %d, Available tickets: %d\n", conferenceTickets, conferenceTickets-bookedTickets)
+
+		// for-each loop show only the firstName
+		firstNames := []string{}
+
+		for _, element := range bookingDetails { // _ used for placeholder , variable we want to ignore using
+			var names = strings.Fields(element) // Fields() split the string
+			firstNames = append(firstNames, names[0])
+		}
+
+		fmt.Println("All the name of people who booked the tickets : ", firstNames)
+
+	}
 
 }
