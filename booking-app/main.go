@@ -45,9 +45,9 @@ func main() {
 
 	// fmt.Println("")
 
-	// infinite for-loop syntax for{}
+	// infinite for-loop syntax for{} or for true {}
 
-	for {
+	for bookedTickets == conferenceTickets && len(bookingDetails) < 50 {
 		var firstName string // defining type of the variable
 		var lastName string
 		var email string
@@ -65,29 +65,46 @@ func main() {
 		fmt.Println("Enter number of tickets: ")
 		fmt.Scanf("%d", &userTickets)
 
-		bookedTickets = bookedTickets + userTickets
-		// bookingDetails[0] = firstName + " " + lastName // string concatination
-		bookingDetails = append(bookingDetails, firstName+" "+lastName) // adding value to the slice
+		isValidName := len(firstName) >= 2 && len(lastName) >= 2
+		isValidEmail := strings.Contains(email, "@")
+		isValidTicketNumber := userTickets > 0 && userTickets <= (conferenceTickets-bookedTickets)
 
-		// fmt.Println("Whole array ", bookingDetails)
-		// fmt.Println("First element: ", bookingDetails[0])
-		// fmt.Printf("Type of array: %T\n", bookingDetails)
-		// fmt.Printf("Length of array: %v\n", len(bookingDetails))
+		if isValidName && isValidEmail && isValidTicketNumber {
 
-		fmt.Printf("Thank you %v %v for booking %v tickets. You will get confirmation email at %v.\n",
-			firstName, lastName, userTickets, email)
+			bookedTickets = bookedTickets + userTickets
+			// bookingDetails[0] = firstName + " " + lastName // string concatination
+			bookingDetails = append(bookingDetails, firstName+" "+lastName) // adding value to the slice
 
-		fmt.Printf("Total tickets: %d, Available tickets: %d\n", conferenceTickets, conferenceTickets-bookedTickets)
+			// fmt.Println("Whole array ", bookingDetails)
+			// fmt.Println("First element: ", bookingDetails[0])
+			// fmt.Printf("Type of array: %T\n", bookingDetails)
+			// fmt.Printf("Length of array: %v\n", len(bookingDetails))
 
-		// for-each loop show only the firstName
-		firstNames := []string{}
+			fmt.Printf("Thank you %v %v for booking %v tickets. You will get confirmation email at %v.\n",
+				firstName, lastName, userTickets, email)
 
-		for _, element := range bookingDetails { // _ used for placeholder , variable we want to ignore using
-			var names = strings.Fields(element) // Fields() split the string
-			firstNames = append(firstNames, names[0])
+			fmt.Printf("Total tickets: %d, Available tickets: %d\n", conferenceTickets, conferenceTickets-bookedTickets)
+
+			// for-each loop show only the firstName
+			firstNames := []string{}
+
+			for _, element := range bookingDetails { // _ used for placeholder , variable we want to ignore using
+				var names = strings.Fields(element) // Fields() split the string
+				firstNames = append(firstNames, names[0])
+			}
+
+			fmt.Println("All the name of people who booked the tickets : ", firstNames)
+
+		} else {
+			fmt.Printf("Please provide valid details to book the tickets")
+			continue
 		}
 
-		fmt.Println("All the name of people who booked the tickets : ", firstNames)
+		// // if all the tickets are finished booked then we will break out of the loop
+		// if bookedTickets == conferenceTickets {
+		// 	fmt.Println("All the ticket for the", conferenceName, "is booked!")
+		// 	break
+		// }
 
 	}
 
