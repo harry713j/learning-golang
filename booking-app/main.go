@@ -9,13 +9,18 @@ import (
 	"strings"
 )
 
+// package level variables, we can't use := for type inference for the package level variables
+var conferenceName = "Dev Conference"
+
+const conferenceTickets = 50
+
+var bookedTickets uint = 0
+var bookingDetails []string
+
 // main() is the entrypoint
 func main() {
-	conferenceName := "Dev Conference"
-	const conferenceTickets = 50
-	var bookedTickets uint = 0 // go syntatical sugar (only for var)
 
-	greetUser(conferenceName, conferenceTickets, bookedTickets)
+	greetUser()
 
 	// fmt.Println(&bookedTickets) // address of the variable (pointer)
 
@@ -27,7 +32,6 @@ func main() {
 	// slices is the abstraction of the array, but it is dynamic in size
 	// var bookingDetails = []string{}
 	// bookingDetails := []string{}
-	var bookingDetails []string
 
 	// only for loop is exist in GO
 
@@ -47,7 +51,7 @@ func main() {
 
 		firstName, lastName, email, userTickets := getUserInput()
 
-		isValidName, isValidEmail, isValidTicketNumber := validateUser(firstName, lastName, email, userTickets, conferenceTickets, bookedTickets)
+		isValidName, isValidEmail, isValidTicketNumber := validateUser(firstName, lastName, email, userTickets)
 
 		if isValidName && isValidEmail && isValidTicketNumber {
 
@@ -57,15 +61,30 @@ func main() {
 			// fmt.Printf("Type of array: %T\n", bookingDetails)
 			// fmt.Printf("Length of array: %v\n", len(bookingDetails))
 
-			bookTicket(bookedTickets, userTickets, bookingDetails, firstName, lastName, email, conferenceTickets)
+			bookingDetails = bookTicket(userTickets, firstName, lastName, email)
 
-			firstNames := filterFirstName(bookingDetails)
+			firstNames := filterFirstName()
 			fmt.Println("All the name of people who booked the tickets : ", firstNames)
 
 		} else {
-			fmt.Printf("Please provide valid details to book the tickets")
+			fmt.Printf("Please provide valid details to book the tickets\n")
+
+			if !isValidName {
+				fmt.Println("First Name and Last Name should contain atleast 2 characters")
+			}
+
+			if !isValidEmail {
+				fmt.Println("Email should be valid and contain @")
+			}
+
+			if !isValidTicketNumber {
+				fmt.Println("Number of tickets should not be greater than remaining tickets")
+			}
+
 			continue
 		}
+
+		fmt.Println()
 
 		// // if all the tickets are finished booked then we will break out of the loop
 		// if bookedTickets == conferenceTickets {
@@ -81,7 +100,7 @@ func main() {
 // 	fmt.Println("Hello there")
 // }
 
-func greetUser(conferenceName string, conferenceTickets int, bookedTickets uint) {
+func greetUser() {
 
 	fmt.Printf("Welcome to %v booking application\n", conferenceName)
 	fmt.Print("Get your ticket here to attend\n")
@@ -90,11 +109,11 @@ func greetUser(conferenceName string, conferenceTickets int, bookedTickets uint)
 		conferenceName, conferenceTickets, bookedTickets)
 }
 
-func filterFirstName(bookings []string) []string {
+func filterFirstName() []string {
 
 	firstNames := []string{}
 	// for-each loop show only the firstName
-	for _, element := range bookings { // _ used for placeholder , variable we want to ignore using
+	for _, element := range bookingDetails { // _ used for placeholder , variable we want to ignore using
 		var names = strings.Fields(element) // Fields() split the string
 		firstNames = append(firstNames, names[0])
 	}
@@ -103,7 +122,7 @@ func filterFirstName(bookings []string) []string {
 }
 
 // functions returning list of values
-func validateUser(firstName string, lastName string, email string, userTickets uint, conferenceTickets int, bookedTickets uint) (bool, bool, bool) {
+func validateUser(firstName string, lastName string, email string, userTickets uint) (bool, bool, bool) {
 	isValidName := len(firstName) >= 2 && len(lastName) >= 2
 	isValidEmail := strings.Contains(email, "@")
 	isValidTicketNumber := userTickets > 0 && userTickets <= uint((conferenceTickets-int(bookedTickets)))
@@ -132,7 +151,7 @@ func getUserInput() (string, string, string, uint) {
 	return firstName, lastName, email, userTickets
 }
 
-func bookTicket(bookedTickets uint, userTickets uint, bookingDetails []string, firstName string, lastName string, email string, conferenceTickets int) {
+func bookTicket(userTickets uint, firstName string, lastName string, email string) []string {
 
 	// bookingDetails[0] = firstName + " " + lastName // string concatination
 	bookingDetails = append(bookingDetails, firstName+" "+lastName) // adding value to the slice
@@ -141,4 +160,6 @@ func bookTicket(bookedTickets uint, userTickets uint, bookingDetails []string, f
 		firstName, lastName, userTickets, email)
 
 	fmt.Printf("Total tickets: %d, Available tickets: %d\n", conferenceTickets, conferenceTickets-int(bookedTickets))
+
+	return bookingDetails
 }
