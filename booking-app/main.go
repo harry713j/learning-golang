@@ -7,8 +7,15 @@ package main // everything in go is package
 import (
 	"booking-app/helper" // importing from our package
 	"fmt"
-	"strconv"
 )
+
+// structure definition
+type UserData struct {
+	firstName       string
+	lastName        string
+	email           string
+	numberOfTickets uint
+}
 
 // package level variables, we can't use := for type inference for the package level variables
 var conferenceName = "Dev Conference"
@@ -16,7 +23,7 @@ var conferenceName = "Dev Conference"
 const conferenceTickets = 50
 
 var bookedTickets uint = 0
-var bookingDetails = make([]map[string]string, 0) // list of map with size 0, which will grow dynamically
+var bookingDetails = make([]UserData, 0) // list of map with size 0, which will grow dynamically
 
 // main() is the entrypoint
 func main() {
@@ -69,21 +76,20 @@ func filterFirstName() []string {
 	firstNames := []string{}
 	// for-each loop show only the firstName
 	for _, element := range bookingDetails { // _ used for placeholder , variable we want to ignore using
-		firstNames = append(firstNames, element["firstName"])
+		firstNames = append(firstNames, element.firstName)
 	}
 
 	return firstNames
 }
 
-func bookTicket(userTickets uint, firstName string, lastName string, email string) []map[string]string {
+func bookTicket(userTickets uint, firstName string, lastName string, email string) []UserData {
 
-	// create a map
-	var userData = make(map[string]string)
-
-	userData["firstName"] = firstName
-	userData["lastName"] = lastName
-	userData["email"] = email
-	userData["numberOfTickets"] = strconv.FormatUint(uint64(userTickets), 10) // converting to string
+	var userData = UserData{
+		firstName:       firstName,
+		lastName:        lastName,
+		email:           email,
+		numberOfTickets: userTickets,
+	}
 
 	bookingDetails = append(bookingDetails, userData) // adding value to the slice
 
