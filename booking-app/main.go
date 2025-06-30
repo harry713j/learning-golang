@@ -7,7 +7,7 @@ package main // everything in go is package
 import (
 	"booking-app/helper" // importing from our package
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // package level variables, we can't use := for type inference for the package level variables
@@ -16,7 +16,7 @@ var conferenceName = "Dev Conference"
 const conferenceTickets = 50
 
 var bookedTickets uint = 0
-var bookingDetails []string
+var bookingDetails = make([]map[string]string, 0) // list of map with size 0, which will grow dynamically
 
 // main() is the entrypoint
 func main() {
@@ -37,6 +37,8 @@ func main() {
 
 			firstNames := filterFirstName()
 			fmt.Println("All the name of people who booked the tickets : ", firstNames)
+
+			fmt.Println("Booking Details: ", bookingDetails)
 
 		} else {
 			fmt.Printf("Please provide valid details to book the tickets\n")
@@ -67,17 +69,23 @@ func filterFirstName() []string {
 	firstNames := []string{}
 	// for-each loop show only the firstName
 	for _, element := range bookingDetails { // _ used for placeholder , variable we want to ignore using
-		var names = strings.Fields(element) // Fields() split the string
-		firstNames = append(firstNames, names[0])
+		firstNames = append(firstNames, element["firstName"])
 	}
 
 	return firstNames
 }
 
-func bookTicket(userTickets uint, firstName string, lastName string, email string) []string {
+func bookTicket(userTickets uint, firstName string, lastName string, email string) []map[string]string {
 
-	// bookingDetails[0] = firstName + " " + lastName // string concatination
-	bookingDetails = append(bookingDetails, firstName+" "+lastName) // adding value to the slice
+	// create a map
+	var userData = make(map[string]string)
+
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["numberOfTickets"] = strconv.FormatUint(uint64(userTickets), 10) // converting to string
+
+	bookingDetails = append(bookingDetails, userData) // adding value to the slice
 
 	fmt.Printf("Thank you %v %v for booking %v tickets. You will get confirmation email at %v.\n",
 		firstName, lastName, userTickets, email)
