@@ -1,12 +1,10 @@
 package main // everything in go is package
 
-// importing single package
-// import "fmt" // fmt package Print() function belong here
-
-// importing multiple package
 import (
 	"booking-app/helper" // importing from our package
 	"fmt"
+	"sync"
+	"time"
 )
 
 // structure definition
@@ -17,15 +15,13 @@ type UserData struct {
 	numberOfTickets uint
 }
 
-// package level variables, we can't use := for type inference for the package level variables
-var conferenceName = "Dev Conference"
-
 const conferenceTickets = 50
 
+var conferenceName = "Dev Conference"
 var bookedTickets uint = 0
 var bookingDetails = make([]UserData, 0) // list of map with size 0, which will grow dynamically
+var waitGroup = sync.WaitGroup{}         // will force main thread to wait for the other thread to complete
 
-// main() is the entrypoint
 func main() {
 
 	helper.GreetUser(conferenceName, conferenceTickets, bookedTickets)
@@ -41,6 +37,13 @@ func main() {
 			bookedTickets = bookedTickets + userTickets
 
 			bookingDetails = bookTicket(userTickets, firstName, lastName, email)
+
+			waitGroup.Add(1) // add number of goroutine to wait group
+
+			// this will block the normal flow of the program, so we can handle it with
+			// goroutine or light-weight thread which will run it in background
+			// sendTicket(userTickets, firstName, lastName, email)
+			go sendTicket(userTickets, firstName, lastName, email) // go keyword for run it with another go routine
 
 			firstNames := filterFirstName()
 			fmt.Println("All the name of people who booked the tickets : ", firstNames)
@@ -68,7 +71,7 @@ func main() {
 		fmt.Println()
 
 	}
-
+	waitGroup.Wait() // wait till wait group counter is 0
 }
 
 func filterFirstName() []string {
@@ -99,4 +102,16 @@ func bookTicket(userTickets uint, firstName string, lastName string, email strin
 	fmt.Printf("Total tickets: %d, Available tickets: %d\n", conferenceTickets, conferenceTickets-int(bookedTickets))
 
 	return bookingDetails
+}
+
+func sendTicket(userTickets uint, firstName string, lastName string, email string) {
+	// simulating a delay (delay the execution of main thread or goroutine)
+	time.Sleep(15 * time.Second)
+
+	var ticket = fmt.Sprintf("%v tickets for %v %v", userTickets, firstName, lastName)
+
+	fmt.Println("######################")
+	fmt.Printf("Sending ticket:\n %v \nto email address %v\n", ticket, email)
+	fmt.Println("######################")
+	waitGroup.Done() // remove the goroutine from the wait group
 }
